@@ -1,0 +1,39 @@
+select     
+      hh.tag,aa.yiZhiNumber,aa.yiZhiTime, erZhiNumber, erZhiTime, sanZhiNumber,     
+      saZhiTime, siZhiNumber, siZhiTime, wuZhiNumber, wuZhiTime    
+from    (select DISTINCT tag from T_ALARM_TAG_INFO where ALARMLEVEL  !=   0) hh    
+LEFT JOIN    (select tag, (count(tag)) yiZhiNumber ,     
+              sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) yiZhiTime     
+              from T_ALARM_TAG_INFO where CLASS_TEAM_NAME='一值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06' 
+              or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) aa on hh.tag = aa.tag    
+LEFT JOIN    (select tag, (count(tag)) erZhiNumber,      sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) erZhiTime    
+              from T_ALARM_TAG_INFO     where CLASS_TEAM_NAME='二值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06'
+              or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) bb     on hh.tag=bb.tag    
+LEFT JOIN    (select tag, (count(tag)) sanZhiNumber,      sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) saZhiTime    
+              from T_ALARM_TAG_INFO     where CLASS_TEAM_NAME='三值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06' 
+              or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) cc     on cc.tag=hh.tag    
+LEFT JOIN    (select tag, (count(tag)) siZhiNumber,      sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) siZhiTime    
+             from T_ALARM_TAG_INFO     where CLASS_TEAM_NAME='四值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06' 
+             or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) dd     on hh.tag=dd.tag    
+LEFT JOIN    (select tag, (count(tag)) wuZhiNumber,      sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) wuZhiTime    
+              from T_ALARM_TAG_INFO     where CLASS_TEAM_NAME='五值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06' 
+              or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) ee     on ee.tag=hh.tag    
+union         select '总计' tag,     sum(yiZhiNumber), sum(yiZhiTime), sum(erZhiNumber), sum(erZhiTime), sum(sanZhiNumber),         
+                            sum(saZhiTime), sum(siZhiNumber), sum(siZhiTime), sum(wuZhiNumber), sum(wuZhiTime)   
+              from(select     hh.tag,aa.yiZhiNumber,aa.yiZhiTime, bb.erZhiNumber, bb.erZhiTime, cc.sanZhiNumber,     
+              cc.saZhiTime, dd.siZhiNumber, dd.siZhiTime, ee.wuZhiNumber, ee.wuZhiTime    
+              from    (select DISTINCT tag from T_ALARM_TAG_INFO) hh    
+              LEFT JOIN    (select tag, (count(tag)) yiZhiNumber ,     sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) yiZhiTime      
+              from T_ALARM_TAG_INFO where CLASS_TEAM_NAME='一值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06' 
+              or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) aa on hh.tag = aa.tag    
+              LEFT JOIN    (select tag, (count(tag)) erZhiNumber,      sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) erZhiTime    
+              from T_ALARM_TAG_INFO     where CLASS_TEAM_NAME='二值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06' 
+              or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) bb     on hh.tag=bb.tag    
+              LEFT JOIN    (select tag, (count(tag)) sanZhiNumber,      sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) saZhiTime    
+              from T_ALARM_TAG_INFO     where CLASS_TEAM_NAME='三值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06' 
+              or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) cc     on cc.tag=hh.tag    
+              LEFT JOIN    (select tag, (count(tag)) siZhiNumber,      sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) siZhiTime    
+              from T_ALARM_TAG_INFO     where CLASS_TEAM_NAME='四值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06' 
+              or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) dd     on hh.tag=dd.tag    
+              LEFT JOIN    (select tag, (count(tag)) wuZhiNumber,      sum(ceil((cast(STOPTIME AS DATE)-cast(STARTTIME AS DATE))*24*60*60)) wuZhiTime    
+              from T_ALARM_TAG_INFO     where CLASS_TEAM_NAME='五值' and (TO_CHAR(STOPTIME,'yyyy-mm') = '2019-06' or TO_CHAR(STARTTIME,'yyyy-mm') = '2019-06') group by tag) ee     on ee.tag=hh.tag)
